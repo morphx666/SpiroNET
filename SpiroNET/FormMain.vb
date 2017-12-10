@@ -9,13 +9,13 @@
 
     Private divisions As Integer = 24
     Private radius As Integer
-    Private center As Point
+    Private center As PointF
     Private gridStyle As GridStyles = GridStyles.Circular
     Private gridMargin As Integer = 10
 
     Private isLeftMouseDown As Boolean
 
-    Private gridLines As New List(Of Point)
+    Private gridLines As New List(Of PointF)
     Private lines As New List(Of Line)
     Private currentLine As Line
 
@@ -45,7 +45,7 @@
     End Sub
 
     Private Sub CreateBitmaps()
-        Dim newCenter As Point = New Point(Me.DisplayRectangle.Width / 2, Me.DisplayRectangle.Height / 2)
+        Dim newCenter As PointF = New PointF(Me.DisplayRectangle.Width / 2, Me.DisplayRectangle.Height / 2)
         Dim newRadius As Integer
 
         Select Case gridStyle
@@ -58,8 +58,8 @@
 
         ' Scale points
         If lines.Count > 0 AndAlso newCenter <> center Then
-            Dim dx As Integer
-            Dim dy As Integer
+            Dim dx As Double
+            Dim dy As Double
             Dim pa As Double
             Dim scale As Double = newRadius / radius
             Dim pr As Double
@@ -70,7 +70,7 @@
                     dy = l.Points(p).Y - center.Y
                     pa = Math.Atan2(dy, dx)
                     pr = Math.Sqrt(dx ^ 2 + dy ^ 2) * scale
-                    l.Points(p) = New Point(newCenter.X + pr * Math.Cos(-pa), newCenter.Y + pr * Math.Sin(pa))
+                    l.Points(p) = New PointF(newCenter.X + pr * Math.Cos(-pa), newCenter.Y + pr * Math.Sin(pa))
                 Next
             Next
         End If
@@ -85,10 +85,9 @@
             Case GridStyles.Circular
                 Dim s As Integer = 360 / divisions
                 For a As Integer = 0 To 360 - s Step s
-                    gridLines.Add(New Point(center.X + radius * Math.Cos(-a * ToRad), center.Y + radius * Math.Sin(a * ToRad)))
+                    gridLines.Add(New PointF(center.X + radius * Math.Cos(-a * ToRad), center.Y + radius * Math.Sin(a * ToRad)))
                 Next
         End Select
-
 
         radius = newRadius
     End Sub
@@ -186,8 +185,12 @@
 
     Private Function IsPointValid(p As Point) As Boolean
         Select Case gridStyle
-            Case GridStyles.Rectangular : Return (p.X >= gridMargin AndAlso p.X < (radius + gridMargin)) AndAlso (p.Y >= gridMargin AndAlso p.Y < (radius + gridMargin))
-            Case GridStyles.Circular : Return (p.X - center.X) ^ 2 / radius ^ 2 + (p.Y - center.Y) ^ 2 / radius ^ 2 <= 1.0
+            Case GridStyles.Rectangular : Return (p.X >= gridMargin AndAlso
+                                                  p.X < (radius + gridMargin)) AndAlso
+                                                  (p.Y >= gridMargin AndAlso
+                                                  p.Y < (radius + gridMargin))
+            Case GridStyles.Circular : Return (p.X - center.X) ^ 2 / radius ^ 2 +
+                                              (p.Y - center.Y) ^ 2 / radius ^ 2 <= 1.0
             Case Else : Return False
         End Select
     End Function

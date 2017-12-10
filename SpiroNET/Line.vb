@@ -1,7 +1,7 @@
 ﻿Public Class Line
     Private mColor As Color = Color.Black
     Private mWidth As Single = 1.0
-    Private mPoints As New List(Of Point)
+    Private mPoints As New List(Of PointF)
 
     Private mPen As Pen
 
@@ -22,7 +22,7 @@
 
     Public Sub New(line As Line)
         mColor = line.Color
-        For Each p As Point In line.Points
+        For Each p As PointF In line.Points
             mPoints.Add(New Point(p.X, p.Y))
         Next
         SetupPen()
@@ -34,7 +34,7 @@
         End Get
     End Property
 
-    Public ReadOnly Property Points As List(Of Point)
+    Public ReadOnly Property Points As List(Of PointF)
         Get
             Return mPoints
         End Get
