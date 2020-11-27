@@ -56,6 +56,8 @@
                 newRadius = Math.Min(Me.DisplayRectangle.Width, Me.DisplayRectangle.Height) / 2 - gridMargin
         End Select
 
+        If newRadius <= 0 Then Return
+
         ' Scale points
         If lines.Count > 0 AndAlso newCenter <> center Then
             Dim dx As Double

@@ -1,7 +1,7 @@
 ﻿Public Class Line
-    Private mColor As Color = Color.Black
-    Private mWidth As Single = 1.0
-    Private mPoints As New List(Of PointF)
+    Private ReadOnly mColor As Color = Color.Black
+    Private ReadOnly mWidth As Single = 1.0
+    Private ReadOnly mPoints As New List(Of PointF)
 
     Private mPen As Pen
 
