@@ -45,6 +45,10 @@
     End Sub
 
     Private Sub CreateBitmaps()
+        Init()
+    End Sub
+
+    Private Sub Init()
         Dim newCenter As PointF = New PointF(Me.DisplayRectangle.Width / 2, Me.DisplayRectangle.Height / 2)
         Dim newRadius As Integer
 
@@ -80,6 +84,7 @@
         center = newCenter
         radius = newRadius
 
+        lines.Clear()
         gridLines.Clear()
         Select Case gridStyle
             Case GridStyles.Rectangular
@@ -146,9 +151,7 @@
     End Sub
 
     Private Sub DrawCircularGrid(g As Graphics)
-        For Each gl In gridLines
-            g.DrawLine(gridPen, center, gl)
-        Next
+        gridLines.ForEach(Sub(gl) g.DrawLine(gridPen, center, gl))
         g.DrawEllipse(gridPen, center.X - radius, center.Y - radius, radius * 2, radius * 2)
     End Sub
 
@@ -205,9 +208,25 @@
                         Dim qs As Integer = radius \ divisions
                         Dim q As New Point((e.Location.X - gridMargin) \ qs, (e.Location.Y - gridMargin) \ qs)
                         currentLine.Points.Add(New Point(e.Location.X - (q.X * qs), e.Location.Y - (q.Y * qs)))
-                    Case GridStyles.Circular : currentLine.Points.Add(e.Location)
+
+                    Case GridStyles.Circular
+                        currentLine.Points.Add(e.Location)
                 End Select
+
+                Me.Invalidate()
             End If
+        End If
+    End Sub
+
+    Private Sub FormMain_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        If e.KeyCode = Keys.Tab Then
+            If gridStyle = GridStyles.Rectangular Then
+                gridStyle = GridStyles.Circular
+            Else
+                gridStyle = GridStyles.Rectangular
+            End If
+
+            Init()
             Me.Invalidate()
         End If
     End Sub
